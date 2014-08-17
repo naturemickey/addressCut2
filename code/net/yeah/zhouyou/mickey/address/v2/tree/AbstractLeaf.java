@@ -3,23 +3,48 @@ package net.yeah.zhouyou.mickey.address.v2.tree;
 import java.util.Collections;
 import java.util.Set;
 
+import net.yeah.zhouyou.mickey.address.v2.CollUtils;
+
 public abstract class AbstractLeaf extends AbstractNode implements INode {
 
+	Set<AbstractLeaf> fop = null;
+
 	public Set<AbstractLeaf> followpos() {
-		Node parent = (Node) this.getParent();
-		INode current = this;
+		if (fop == null) {
+			fop = Collections.emptySet();
+			Node parent = (Node) this.getParent();
+			INode current = this;
 
-		while (parent != null && (parent.getType() == Node.Type.OR || parent.getLeft() != current)) {
-			current = parent;
-			parent = (Node) current.getParent();
+			while (parent != null && (parent.getType() == Node.Type.OR || parent.getLeft() != current)) {
+				current = parent;
+				parent = (Node) current.getParent();
+			}
+
+			if (parent != null) {
+				// 以下一行代码成立，必须先证明：this必然在parent.getLeft().lastPos()中。
+				fop = parent.getRight().firstpos();
+			}
 		}
 
-		if (parent != null) {
-			// 以下一行代码成立，必须先证明：this必然在parent.getLeft().lastPos()中。
-			return parent.getRight().firstpos();
-		}
+		return fop;
+	}
 
-		return Collections.emptySet();
+	Set<AbstractLeaf> fp = null;
+
+	@Override
+	public Set<AbstractLeaf> firstpos() {
+		if (fp == null)
+			fp = CollUtils.asSet((AbstractLeaf) this);
+		return fp;
+	}
+
+	Set<AbstractLeaf> lp = null;
+
+	@Override
+	public Set<AbstractLeaf> lastpos() {
+		if (lp == null)
+			lp = CollUtils.asSet((AbstractLeaf) this);
+		return lp;
 	}
 
 	@Override

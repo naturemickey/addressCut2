@@ -21,8 +21,10 @@ public class NodeCreater {
 			if (root == null) {
 				root = create(name);
 			} else {
-				root = new Node(Node.Type.OR, root, create(name));
+				root = new Node(Node.Type.OR, create(name), root);
 			}
+			root.firstpos();
+			root.lastpos();
 		}
 		return new Node(Node.Type.CAT, root, new AcceptLeaf(key));
 	}
@@ -33,8 +35,10 @@ public class NodeCreater {
 			if (root == null) {
 				root = node;
 			} else {
-				root = new Node(Node.Type.OR, root, node);
+				root = new Node(Node.Type.OR, node, root);
 			}
+			root.firstpos();
+			root.lastpos();
 		}
 		return root;
 	}
