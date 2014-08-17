@@ -8,12 +8,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
 public class CityBasedataReader implements Iterable<String>, Iterator<String> {
-	private final InputStream fis;
+	private final InputStream fis = DataCache.class.getClassLoader().getResourceAsStream("citybasedata.config");
 	private final BufferedReader br;
 	private String line;
 
 	public CityBasedataReader() {
-		fis = DataCache.class.getClassLoader().getResourceAsStream("citybasedata.config");
 		try {
 			br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
 		} catch (UnsupportedEncodingException e) {

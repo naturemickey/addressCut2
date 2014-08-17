@@ -64,9 +64,9 @@ public class Address {
 		return originalAddress;
 	}
 
-	public void setAddr(CityToken addr, String realName, int level) {
+	public void setAddr(Long id, String realName, int level) {
 		// 理论上，以下这行不会有空指针异常或下标超范围异常出现。
-		addr = DataCache.getCodeMap().get(addr.getCode()).get(0);
+		CityToken addr = DataCache.getCodeMap().get(id).get(0);
 		switch (level) {
 		case 1:
 			provinceAddress = addr;

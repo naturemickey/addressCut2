@@ -22,13 +22,13 @@ public class Leaf extends AbstractLeaf implements INode {
 	}
 
 	@Override
-	public Set<? extends INode> firstPos() {
-		return CollUtils.asSet(this);
+	public Set<AbstractLeaf> firstpos() {
+		return CollUtils.asSet((AbstractLeaf) this);
 	}
 
 	@Override
-	public Set<? extends INode> lastPos() {
-		return CollUtils.asSet(this);
+	public Set<AbstractLeaf> lastpos() {
+		return CollUtils.asSet((AbstractLeaf) this);
 	}
 
 }

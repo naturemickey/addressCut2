@@ -13,12 +13,11 @@ public class CollUtils {
 		return res;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T> Set<T> union(Set<?> c1, Set<?> c2) {
-		Set<Object> res = new HashSet<Object>();
+	public static <T> Set<T> union(Set<T> c1, Set<T> c2) {
+		Set<T> res = new HashSet<T>();
 		res.addAll(c1);
 		res.addAll(c2);
-		return (Set<T>) res;
+		return res;
 	}
 
 }

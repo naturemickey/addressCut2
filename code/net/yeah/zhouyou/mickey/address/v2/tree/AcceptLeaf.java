@@ -1,5 +1,6 @@
 package net.yeah.zhouyou.mickey.address.v2.tree;
 
+import java.util.Collections;
 import java.util.Set;
 
 import net.yeah.zhouyou.mickey.address.v2.CollUtils;
@@ -22,12 +23,17 @@ public class AcceptLeaf extends AbstractLeaf implements INode {
 	}
 
 	@Override
-	public Set<? extends INode> firstPos() {
-		return CollUtils.asSet(this);
+	public Set<AbstractLeaf> firstpos() {
+		return CollUtils.asSet((AbstractLeaf) this);
 	}
 
 	@Override
-	public Set<? extends INode> lastPos() {
-		return CollUtils.asSet(this);
+	public Set<AbstractLeaf> lastpos() {
+		return CollUtils.asSet((AbstractLeaf) this);
+	}
+
+	@Override
+	public Set<AbstractLeaf> followpos() {
+		return Collections.emptySet();
 	}
 }
