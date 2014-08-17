@@ -1,0 +1,66 @@
+package net.yeah.zhouyou.mickey.address.v2;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.Iterator;
+
+public class CityBasedataReader implements Iterable<String>, Iterator<String> {
+	private final InputStream fis;
+	private final BufferedReader br;
+	private String line;
+
+	public CityBasedataReader() {
+		fis = DataCache.class.getClassLoader().getResourceAsStream("citybasedata.config");
+		try {
+			br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public boolean hasNext() {
+		try {
+			while ((line = br.readLine()) != null) {
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		boolean res = line != null;
+		if (!res) {
+			if (br != null)
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			if (fis != null)
+				try {
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+		}
+		return res;
+	}
+
+	@Override
+	public String next() {
+		return line;
+	}
+
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Iterator<String> iterator() {
+		return this;
+	}
+
+}
