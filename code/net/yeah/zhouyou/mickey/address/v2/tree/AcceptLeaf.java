@@ -7,13 +7,13 @@ import net.yeah.zhouyou.mickey.address.v2.CollUtils;
 
 public class AcceptLeaf extends AbstractLeaf implements INode {
 
-	private String key;
+	private Long key;
 
-	public AcceptLeaf(String key) {
+	public AcceptLeaf(Long key) {
 		this.key = key;
 	}
 
-	public String getKey() {
+	public Long getKey() {
 		return key;
 	}
 

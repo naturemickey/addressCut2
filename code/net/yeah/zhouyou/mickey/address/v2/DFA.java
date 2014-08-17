@@ -193,15 +193,15 @@ class Dstate {
 		return res;
 	}
 
-	String acceptKey() {
-		String key = null;
+	Long acceptKey() {
+		Long key = null;
 		for (AbstractLeaf n : nodes) {
 			if (n instanceof AcceptLeaf) {
 				AcceptLeaf al = (AcceptLeaf) n;
 				if (key == null)
 					key = al.getKey();
 				else if (!key.equals(al.getKey()))
-					throw new RuntimeException(key);
+					throw new RuntimeException();
 			}
 		}
 		return key;
@@ -213,7 +213,7 @@ class DFAState implements Serializable {
 	private static final long serialVersionUID = -6987881824989057409L;
 
 	Map<Character, DFAState> path = new HashMap<Character, DFAState>();;
-	String key;
+	Long key;
 
 	DFAState tran(char c) {
 		return path.get(c);
@@ -223,9 +223,18 @@ class DFAState implements Serializable {
 		return key != null;
 	}
 
+	@Override
+	public String toString() {
+		String ss = super.toString();
+		ss = ss.substring(ss.lastIndexOf('.') + 1);
+		if (this.key == null)
+			return ss;
+		return ss + "{" + this.key + "}";
+	}
+
 	public String createString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append('[').append(super.toString()).append("]\n");
+		sb.append('[').append(toString()).append("]\n");
 		for (Entry<Character, DFAState> e : this.path.entrySet()) {
 			sb.append('\t').append(':').append(e.getKey() == null ? "_e" : e.getKey()).append("->")
 					.append(e.getValue()).append('\n');

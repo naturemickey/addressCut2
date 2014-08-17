@@ -15,7 +15,7 @@ public class NodeCreater {
 		return root;
 	}
 
-	public static INode create(String key, String... names) {
+	public static INode create(Long key, String... names) {
 		INode root = null;
 		for (String name : names) {
 			if (root == null) {
