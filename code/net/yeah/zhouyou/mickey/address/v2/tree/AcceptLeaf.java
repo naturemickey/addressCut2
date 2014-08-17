@@ -5,13 +5,13 @@ import java.util.Set;
 
 public class AcceptLeaf extends AbstractLeaf implements INode {
 
-	private Long key;
+	private String key;
 
-	public AcceptLeaf(Long key) {
+	public AcceptLeaf(String key) {
 		this.key = key;
 	}
 
-	public Long getKey() {
+	public String getKey() {
 		return key;
 	}
 

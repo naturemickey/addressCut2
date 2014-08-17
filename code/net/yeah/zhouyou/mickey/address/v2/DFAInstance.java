@@ -16,24 +16,12 @@ public class DFAInstance {
 		String cacheName = "dfaObj.cache";
 		DFA fa = SerializeUtil.read(cacheName);
 		if (fa == null) {
-
 			List<INode> nodeList = new ArrayList<INode>();
-
-			for (String line : new CityBasedataReader()) {
-				String[] ss = line.split(",");
-				if (ss.length <= 2)
-					continue;
-				Long id = Long.valueOf(ss[0]);
-				// Long parentId = Long.valueOf(ss[1]);
-				// String level = ss[2];
-				String[] names = new String[ss.length - 3];
-				System.arraycopy(ss, 3, names, 0, names.length);
-
-				nodeList.add(NodeCreater.create(id, names));
+			for (String name : DataCache.getNameMap().keySet()) {
+				nodeList.add(NodeCreater.create(name));
 			}
-
 			INode root = NodeCreater.merge(nodeList.toArray(new INode[nodeList.size()]));
-//			System.out.println(root.createString());
+
 			dfa = DFA.create(root);
 			SerializeUtil.write(dfa, cacheName);
 		} else {

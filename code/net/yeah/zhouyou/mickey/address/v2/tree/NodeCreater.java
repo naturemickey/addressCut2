@@ -11,22 +11,8 @@ public class NodeCreater {
 			} else {
 				root = new Node(Node.Type.CAT, root, new Leaf(c));
 			}
-			root.firstpos();
 		}
-		return root;
-	}
-
-	public static INode create(Long key, String... names) {
-		INode root = null;
-		for (String name : names) {
-			if (root == null) {
-				root = create(name);
-			} else {
-				root = new Node(Node.Type.OR, create(name), root);
-			}
-			root.firstpos();
-		}
-		return new Node(Node.Type.CAT, root, new AcceptLeaf(key));
+		return new Node(Node.Type.CAT, root, new AcceptLeaf(name));
 	}
 
 	public static INode merge(INode... nodes) {
@@ -45,12 +31,8 @@ public class NodeCreater {
 			if (_1 == null) {
 				_1 = node;
 			} else {
-				// _2 = node;
-				node = new Node(Node.Type.OR, _1, node);
-				nodes2[idx++] = node;
-				node.firstpos();
+				nodes2[idx++] = new Node(Node.Type.OR, _1, node);
 				_1 = null;
-				// _2 = null;
 			}
 		}
 
@@ -58,18 +40,6 @@ public class NodeCreater {
 			nodes2[idx] = _1;
 		}
 		return merge(nodes2);
-
-		// INode root = null;
-		// for (INode node : nodes) {
-		// if (root == null) {
-		// root = node;
-		// } else {
-		// root = new Node(Node.Type.OR, node, root);
-		// }
-		// // root.firstpos();
-		// // root.lastpos();
-		// }
-		// return root;
 	}
 
 }

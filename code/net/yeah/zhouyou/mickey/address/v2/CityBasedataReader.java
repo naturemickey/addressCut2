@@ -8,12 +8,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
 public class CityBasedataReader implements Iterable<String>, Iterator<String> {
-	private final InputStream fis = DataCache.class.getClassLoader().getResourceAsStream("citybasedata.config");
+	private final InputStream fis;
 	private final BufferedReader br;
 	private String line;
 
 	public CityBasedataReader() {
 		try {
+			fis = DataCache.class.getClassLoader().getResourceAsStream("citybasedata.config");
 			br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
@@ -23,7 +24,8 @@ public class CityBasedataReader implements Iterable<String>, Iterator<String> {
 	@Override
 	public boolean hasNext() {
 		try {
-			line = br.readLine();
+			if (br != null)
+				line = br.readLine();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

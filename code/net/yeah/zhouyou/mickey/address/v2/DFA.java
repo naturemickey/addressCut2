@@ -72,6 +72,7 @@ public class DFA implements Serializable {
 				ds.path.put(e.getKey(), ds2);
 			}
 		}
+		System.out.println(map.size());
 		return new DFA(map.get(start));
 	}
 
@@ -91,8 +92,8 @@ public class DFA implements Serializable {
 			currentState = currentState.tran(a);
 			if (currentState == null) {
 				if (currentAccepted != null) {
-					// res.add(currentAccepted.getName());
-					res.add(new String(bl, fromIdx, currentIdx - fromIdx));
+					res.add(currentAccepted.key);
+
 					fromIdx = currentAcceptedIdx + 1;
 					currentAccepted = null;
 					currentIdx = currentAcceptedIdx;
@@ -107,8 +108,7 @@ public class DFA implements Serializable {
 			}
 		}
 		if (currentAccepted != null) {
-			// res.add(currentAccepted.getName());
-			res.add(new String(bl, fromIdx, currentIdx - fromIdx));
+			res.add(currentAccepted.key);
 		}
 		return res;
 	}
@@ -138,13 +138,6 @@ class Dstates implements Iterable<Dstate> {
 	Set<Dstate> states = new HashSet<Dstate>();
 
 	void addIfNotContains(Dstate s) {
-		// boolean isContains = false;
-		// for (Dstate state : states) {
-		// if (state.nodes.equals(s.nodes)) {
-		// isContains = true;
-		// break;
-		// }
-		// }
 		if (!states.contains(s)) {
 			states.add(s);
 		}
@@ -209,26 +202,13 @@ class Dstate {
 		return res;
 	}
 
-	Long acceptKey() {
-		Long key = null;
+	String acceptKey() {
+		String key = null;
 		for (AbstractLeaf n : nodes) {
 			if (n instanceof AcceptLeaf) {
 				AcceptLeaf al = (AcceptLeaf) n;
 				if (key == null)
-					key = al.getKey();
-				else if (!key.equals(al.getKey())) {
-					List<CityToken> ctl1 = DataCache.getIdMap().get(key);
-					List<CityToken> ctl2 = DataCache.getIdMap().get(al.getKey());
-					// 重名的数据会有冲突
-					// System.out.println("冲突：");
-					// System.out.println(ctl1);
-					// System.out.println(ctl2);
-					if (ctl1.get(0).getLevel() <= ctl2.get(0).getLevel())
-						return ctl1.get(0).getId();
-					else
-						return ctl2.get(0).getId();
-					// throw new RuntimeException();
-				}
+					return al.getKey();
 			}
 		}
 		return key;
@@ -266,7 +246,7 @@ class DFAState implements Serializable {
 	private static final long serialVersionUID = -6987881824989057409L;
 
 	Map<Character, DFAState> path = new HashMap<Character, DFAState>();;
-	Long key;
+	String key;
 
 	DFAState tran(char c) {
 		return path.get(c);
