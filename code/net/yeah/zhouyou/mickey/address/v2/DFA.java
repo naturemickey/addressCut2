@@ -34,24 +34,19 @@ public class DFA implements Serializable {
 		dstates.addIfNotContains(start);
 		for (Dstate s : dstates) {
 			s.marked = true;
-			for (char a : s.allInputs()) {
+
+			for (Map.Entry<Character, List<Leaf>> e : s.allInputs().entrySet()) {
+				char a = e.getKey();
 				Set<AbstractLeaf> u = new HashSet<AbstractLeaf>();
-				for (AbstractLeaf n : s.nodes) {
-					if (n instanceof Leaf) {
-						Leaf leaf = (Leaf) n;
-						if (leaf.getInput() == a) {
-							u.addAll(leaf.followpos());
-						}
-					}
+				for (Leaf leaf : e.getValue()) {
+					u.addAll(leaf.followpos());
 				}
 				if (u.size() > 0) {
 					Dstate du = new Dstate(u);
 					dstates.addIfNotContains(du);
-
-					s.path.put(a, du);
+					s.addPath(a, du);
 				}
 			}
-			// System.out.println(dstates.states.size());
 		}
 
 		Map<Dstate, DFAState> map = new HashMap<Dstate, DFAState>();
@@ -147,32 +142,24 @@ class Dstates implements Iterable<Dstate> {
 	public Iterator<Dstate> iterator() {
 		return new Iterator<Dstate>() {
 
-			Set<Dstate> cache = new HashSet<Dstate>();
-			Dstate next = null;
+			List<Dstate> cache = new ArrayList<Dstate>();
 
 			@Override
 			public boolean hasNext() {
 				if (!cache.isEmpty()) {
-					Iterator<Dstate> it = cache.iterator();
-					if (it.hasNext()) {
-						next = it.next();
-						cache.remove(next);
-						return true;
-					}
+					return true;
 				}
 				for (Dstate s : states) {
 					if (!s.marked) {
 						cache.add(s);
 					}
 				}
-				if (cache.isEmpty())
-					return false;
-				return hasNext();
+				return !cache.isEmpty();
 			}
 
 			@Override
 			public Dstate next() {
-				return next;
+				return cache.remove(cache.size() - 1);
 			}
 
 			@Override
@@ -192,26 +179,33 @@ class Dstate {
 		this.nodes = nodes;
 	}
 
-	Set<Character> allInputs() {
-		Set<Character> res = new HashSet<Character>();
+	Map<Character, List<Leaf>> allInputs() {
+		Map<Character, List<Leaf>> ai = new HashMap<Character, List<Leaf>>();
 		for (AbstractLeaf n : nodes) {
 			if (n instanceof Leaf) {
-				res.add(((Leaf) n).getInput());
+				char input = ((Leaf) n).getInput();
+				List<Leaf> leafList = ai.get(input);
+				if (leafList == null) {
+					leafList = new ArrayList<Leaf>();
+					ai.put(input, leafList);
+				}
+				leafList.add((Leaf) n);
 			}
 		}
-		return res;
+		return ai;
+	}
+
+	void addPath(char c, Dstate s) {
+		path.put(c, s);
 	}
 
 	String acceptKey() {
-		String key = null;
 		for (AbstractLeaf n : nodes) {
 			if (n instanceof AcceptLeaf) {
-				AcceptLeaf al = (AcceptLeaf) n;
-				if (key == null)
-					return al.getKey();
+				return ((AcceptLeaf) n).getKey();
 			}
 		}
-		return key;
+		return null;
 	}
 
 	@Override
