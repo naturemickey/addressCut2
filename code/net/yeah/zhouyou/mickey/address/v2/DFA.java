@@ -17,7 +17,10 @@ import net.yeah.zhouyou.mickey.address.v2.tree.AcceptLeaf;
 import net.yeah.zhouyou.mickey.address.v2.tree.INode;
 import net.yeah.zhouyou.mickey.address.v2.tree.Leaf;
 
-public class DFA {
+public class DFA implements Serializable {
+
+	private static final long serialVersionUID = -5466833365291742215L;
+
 	private DFAState startState;
 
 	private DFA(DFAState start) {
@@ -41,11 +44,14 @@ public class DFA {
 						}
 					}
 				}
-				Dstate du = new Dstate(u);
-				dstates.addIfNotContains(du);
+				if (u.size() > 0) {
+					Dstate du = new Dstate(u);
+					dstates.addIfNotContains(du);
 
-				s.path.put(a, du);
+					s.path.put(a, du);
+				}
 			}
+			// System.out.println(dstates.states.size());
 		}
 
 		Map<Dstate, DFAState> map = new HashMap<Dstate, DFAState>();
@@ -132,14 +138,14 @@ class Dstates implements Iterable<Dstate> {
 	Set<Dstate> states = new HashSet<Dstate>();
 
 	void addIfNotContains(Dstate s) {
-		boolean isContains = false;
-		for (Dstate state : states) {
-			if (state.nodes.equals(s.nodes)) {
-				isContains = true;
-				break;
-			}
-		}
-		if (!isContains) {
+		// boolean isContains = false;
+		// for (Dstate state : states) {
+		// if (state.nodes.equals(s.nodes)) {
+		// isContains = true;
+		// break;
+		// }
+		// }
+		if (!states.contains(s)) {
 			states.add(s);
 		}
 	}
@@ -148,17 +154,27 @@ class Dstates implements Iterable<Dstate> {
 	public Iterator<Dstate> iterator() {
 		return new Iterator<Dstate>() {
 
+			Set<Dstate> cache = new HashSet<Dstate>();
 			Dstate next = null;
 
 			@Override
 			public boolean hasNext() {
-				for (Dstate s : states) {
-					if (!s.marked) {
-						next = s;
+				if (!cache.isEmpty()) {
+					Iterator<Dstate> it = cache.iterator();
+					if (it.hasNext()) {
+						next = it.next();
+						cache.remove(next);
 						return true;
 					}
 				}
-				return false;
+				for (Dstate s : states) {
+					if (!s.marked) {
+						cache.add(s);
+					}
+				}
+				if (cache.isEmpty())
+					return false;
+				return hasNext();
 			}
 
 			@Override
@@ -200,12 +216,49 @@ class Dstate {
 				AcceptLeaf al = (AcceptLeaf) n;
 				if (key == null)
 					key = al.getKey();
-				else if (!key.equals(al.getKey()))
-					throw new RuntimeException();
+				else if (!key.equals(al.getKey())) {
+					List<CityToken> ctl1 = DataCache.getIdMap().get(key);
+					List<CityToken> ctl2 = DataCache.getIdMap().get(al.getKey());
+					// 重名的数据会有冲突
+					// System.out.println("冲突：");
+					// System.out.println(ctl1);
+					// System.out.println(ctl2);
+					if (ctl1.get(0).getLevel() <= ctl2.get(0).getLevel())
+						return ctl1.get(0).getId();
+					else
+						return ctl2.get(0).getId();
+					// throw new RuntimeException();
+				}
 			}
 		}
 		return key;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((nodes == null) ? 0 : nodes.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Dstate other = (Dstate) obj;
+		if (nodes == null) {
+			if (other.nodes != null)
+				return false;
+		} else if (!nodes.equals(other.nodes))
+			return false;
+		return true;
+	}
+
 }
 
 class DFAState implements Serializable {

@@ -90,19 +90,19 @@ public class Node extends AbstractNode implements INode {
 		return fp;
 	}
 
-	Set<AbstractLeaf> lp = null;
-
-	@Override
-	public Set<AbstractLeaf> lastpos() {
-		if (lp == null) {
-			if (this.type == Type.CAT) {
-				lp = right.lastpos();
-			} else {
-				Set<AbstractLeaf> lf = left.firstpos();
-				Set<AbstractLeaf> rf = right.firstpos();
-				lp = CollUtils.union(lf, rf);
-			}
-		}
-		return lp;
-	}
+	// Set<AbstractLeaf> lp = null;
+	//
+	// @Override
+	// public Set<AbstractLeaf> lastpos() {
+	// if (lp == null) {
+	// if (this.type == Type.CAT) {
+	// lp = right.lastpos();
+	// } else {
+	// Set<AbstractLeaf> lf = left.firstpos();
+	// Set<AbstractLeaf> rf = right.firstpos();
+	// lp = CollUtils.union(lf, rf);
+	// }
+	// }
+	// return lp;
+	// }
 }

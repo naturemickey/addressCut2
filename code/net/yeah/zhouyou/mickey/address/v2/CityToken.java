@@ -81,8 +81,6 @@ public class CityToken implements Serializable {
 
 	@Override
 	public String toString() {
-		return "CityToken [id=" + id + ", name=" + name + ", parentId=" + parentId + ", level=" + level + ", parent="
-				+ parent + "]";
+		return "CityToken [id=" + id + ", name=" + name + ", parentId=" + parentId + ", level=" + level + "]";
 	}
-
 }

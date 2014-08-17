@@ -38,14 +38,14 @@ public abstract class AbstractLeaf extends AbstractNode implements INode {
 		return fp;
 	}
 
-	Set<AbstractLeaf> lp = null;
-
-	@Override
-	public Set<AbstractLeaf> lastpos() {
-		if (lp == null)
-			lp = CollUtils.asSet((AbstractLeaf) this);
-		return lp;
-	}
+//	Set<AbstractLeaf> lp = null;
+//
+//	@Override
+//	public Set<AbstractLeaf> lastpos() {
+//		if (lp == null)
+//			lp = CollUtils.asSet((AbstractLeaf) this);
+//		return lp;
+//	}
 
 	@Override
 	public String toString() {

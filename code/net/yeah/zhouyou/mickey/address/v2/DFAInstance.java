@@ -33,7 +33,7 @@ public class DFAInstance {
 			}
 
 			INode root = NodeCreater.merge(nodeList.toArray(new INode[nodeList.size()]));
-
+//			System.out.println(root.createString());
 			dfa = DFA.create(root);
 			SerializeUtil.write(dfa, cacheName);
 		} else {

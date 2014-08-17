@@ -66,7 +66,7 @@ public class AddressScanner {
 					if (ct.getLevel() < 3 // 当前识别到的为省级或市级
 							|| (bottom.getLevel() >= 2 && ct.getLevel() - bottom.getLevel() <= 2) // bottom为市（或以下）级时，当前识别到的与bottom相差在两级以内
 							|| name.length() >= 3 // 当前识别到的地址文字长度至少为3个字
-							|| DataCache.getCodeMap().get(ct.getId()).get(0).getName().endsWith(name) // 当前识别到的地址是一个全称
+							|| DataCache.getIdMap().get(ct.getId()).get(0).getName().endsWith(name) // 当前识别到的地址是一个全称
 					) {
 						bottom = ct;
 						res.setAddr(ct.getId(), name, ct.getLevel());

@@ -6,7 +6,8 @@ public interface INode {
 
 	Set<AbstractLeaf> firstpos();
 
-	Set<AbstractLeaf> lastpos();
+	// 对于简化的情况，看似不需要这个方法
+	// Set<AbstractLeaf> lastpos();
 
 	/**
 	 * 只能set一次非空值。

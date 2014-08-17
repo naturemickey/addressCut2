@@ -16,7 +16,7 @@ public class DataCache {
 		return nameMap;
 	}
 
-	public static Map<Long, List<CityToken>> getCodeMap() {
+	public static Map<Long, List<CityToken>> getIdMap() {
 		return idMap;
 	}
 
