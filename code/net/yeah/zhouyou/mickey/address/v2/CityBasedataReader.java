@@ -23,7 +23,7 @@ public class CityBasedataReader implements Iterable<String>, Iterator<String> {
 	@Override
 	public boolean hasNext() {
 		try {
-			while ((line = br.readLine()) != null) {
+			while ((line = br.readLine()) == null) {
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);

@@ -27,4 +27,16 @@ public class NodeCreater {
 		return new Node(Node.Type.CAT, root, new AcceptLeaf(key));
 	}
 
+	public static INode merge(INode... nodes) {
+		INode root = null;
+		for (INode node : nodes) {
+			if (root == null) {
+				root = node;
+			} else {
+				root = new Node(Node.Type.OR, root, node);
+			}
+		}
+		return root;
+	}
+
 }
