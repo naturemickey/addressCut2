@@ -4,7 +4,7 @@ import java.util.Set;
 
 import net.yeah.zhouyou.mickey.address.v2.CollUtils;
 
-public class Leaf extends AbstractNode implements INode {
+public class Leaf extends AbstractLeaf implements INode {
 
 	private char input;
 
@@ -17,8 +17,8 @@ public class Leaf extends AbstractNode implements INode {
 	}
 
 	@Override
-	public String toString() {
-		return "Leaf [input=" + input + "]";
+	public String psToString() {
+		return "[input=" + input + "]";
 	}
 
 	@Override

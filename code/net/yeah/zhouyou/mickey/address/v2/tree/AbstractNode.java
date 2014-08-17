@@ -16,4 +16,8 @@ public abstract class AbstractNode implements INode {
 		return this.parent;
 	}
 
+	@Override
+	public String createString() {
+		return this.toString();
+	}
 }

@@ -11,4 +11,6 @@ public interface INode {
 	void setParent(INode node);
 
 	INode getParent();
+	
+	String createString();
 }

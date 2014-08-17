@@ -42,14 +42,14 @@ public class Node extends AbstractNode implements INode {
 		return right;
 	}
 
-	public String toString() {
+	public String createString() {
 		return createString(0);
 	}
 
 	private String createString(int level) {
 		StringBuilder sb = new StringBuilder();
 		String bs = blks(level);
-		sb.append(bs).append("Node[").append(this.type).append("]:\n");
+		sb.append(bs).append("Node[").append(this.type).append(']').append(":\n");
 		sb.append(childToString(left, level)).append('\n');
 		sb.append(childToString(right, level));
 		return sb.toString();
@@ -61,7 +61,7 @@ public class Node extends AbstractNode implements INode {
 		if (node instanceof Node) {
 			sb.append(((Node) node).createString(lvl));
 		} else {
-			sb.append(blks(lvl)).append(node);
+			sb.append(blks(lvl)).append(node.createString());
 		}
 		return sb.toString();
 	}

@@ -4,7 +4,7 @@ import java.util.Set;
 
 import net.yeah.zhouyou.mickey.address.v2.CollUtils;
 
-public class AcceptLeaf extends AbstractNode implements INode {
+public class AcceptLeaf extends AbstractLeaf implements INode {
 
 	private String key;
 
@@ -17,8 +17,8 @@ public class AcceptLeaf extends AbstractNode implements INode {
 	}
 
 	@Override
-	public String toString() {
-		return "AcceptLeaf [key=" + key + "]";
+	public String psToString() {
+		return "[key=" + key + "]";
 	}
 
 	@Override
