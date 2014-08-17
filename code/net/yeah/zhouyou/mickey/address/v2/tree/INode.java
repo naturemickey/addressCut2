@@ -7,7 +7,8 @@ public interface INode {
 	Set<? extends INode> firstPos();
 
 	Set<? extends INode> lastPos();
-	
+
 	void setParent(INode node);
 
+	INode getParent();
 }

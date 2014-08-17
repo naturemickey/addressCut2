@@ -4,10 +4,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.yeah.zhouyou.mickey.address.v2.tree.INode;
-
 public class CollUtils {
 
+	@SuppressWarnings("unchecked")
 	public static <T> Set<T> asSet(T... os) {
 		Set<T> res = new HashSet<T>();
 		res.addAll(Arrays.asList(os));

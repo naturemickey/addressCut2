@@ -4,7 +4,7 @@ import java.util.Set;
 
 import net.yeah.zhouyou.mickey.address.v2.CollUtils;
 
-public class Node implements INode {
+public class Node extends AbstractNode implements INode {
 
 	public static enum Type {
 		// 对于地址的基础数据，每个地址内部只有CAT，多个地址之间是OR，不存在kleen closure类型。
@@ -20,7 +20,6 @@ public class Node implements INode {
 	private Type type;
 	private INode left;
 	private INode right;
-	private INode parent;
 
 	public Node(Type type, INode left, INode right) {
 		this.type = type;
@@ -91,12 +90,5 @@ public class Node implements INode {
 		Set<?> lf = left.firstPos();
 		Set<?> rf = right.firstPos();
 		return CollUtils.union(lf, rf);
-	}
-
-	@Override
-	public void setParent(INode node) {
-		if (this.parent != null)
-			throw new RuntimeException();
-		this.parent = node;
 	}
 }

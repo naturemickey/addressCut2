@@ -4,10 +4,9 @@ import java.util.Set;
 
 import net.yeah.zhouyou.mickey.address.v2.CollUtils;
 
-public class Leaf implements INode {
+public class Leaf extends AbstractNode implements INode {
 
 	private char input;
-	private INode parent;
 
 	public Leaf(char input) {
 		this.input = input;
@@ -30,13 +29,6 @@ public class Leaf implements INode {
 	@Override
 	public Set<? extends INode> lastPos() {
 		return CollUtils.asSet(this);
-	}
-
-	@Override
-	public void setParent(INode node) {
-		if (this.parent != null)
-			throw new RuntimeException();
-		this.parent = node;
 	}
 
 }
