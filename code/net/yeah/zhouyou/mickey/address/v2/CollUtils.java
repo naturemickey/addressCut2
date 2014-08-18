@@ -6,7 +6,6 @@ import java.util.Set;
 
 public class CollUtils {
 
-	@SuppressWarnings("unchecked")
 	public static <T> Set<T> asSet(T... os) {
 		Set<T> res = new HashSet<T>();
 		res.addAll(Arrays.asList(os));

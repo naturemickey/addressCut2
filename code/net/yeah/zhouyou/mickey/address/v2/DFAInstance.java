@@ -13,7 +13,7 @@ public class DFAInstance {
 	static {
 		long initStart = System.currentTimeMillis();
 
-		String cacheName = "dfaObj.cache";
+		String cacheName = "dfaObj_v2.cache";
 		DFA fa = SerializeUtil.read(cacheName);
 		if (fa == null) {
 			List<INode> nodeList = new ArrayList<INode>();

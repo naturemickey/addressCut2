@@ -14,7 +14,7 @@ public class CityBasedataReader implements Iterable<String>, Iterator<String> {
 
 	public CityBasedataReader() {
 		try {
-			fis = DataCache.class.getClassLoader().getResourceAsStream("citybasedata.config");
+			fis = DataCache.class.getClassLoader().getResourceAsStream("citybasedata_v2.config");
 			br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
