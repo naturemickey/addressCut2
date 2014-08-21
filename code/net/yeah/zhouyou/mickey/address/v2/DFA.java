@@ -67,7 +67,7 @@ public class DFA implements Serializable {
 				ds.path.put(e.getKey(), ds2);
 			}
 		}
-		System.out.println(map.size());
+//		System.out.println(map.size());
 		return new DFA(map.get(start));
 	}
 

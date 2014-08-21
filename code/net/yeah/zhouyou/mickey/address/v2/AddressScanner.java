@@ -1,6 +1,6 @@
 package net.yeah.zhouyou.mickey.address.v2;
 
-import static net.yeah.zhouyou.mickey.address.v2.DFAInstance.dfa;
+import static net.yeah.zhouyou.mickey.address.v2.DFAInstance.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,6 +21,134 @@ public class AddressScanner {
 	}
 
 	private static Pattern p = Pattern.compile("[\\s　]");
+
+	public static Address scan2(String txt) {
+		// 中文地址中的空白是没有意义的
+		txt = p.matcher(txt).replaceAll("");
+		List<String> addrList = dfa123.scan(txt);
+
+		Address res = new Address(txt);
+		if (addrList.size() == 0)
+			return res;
+
+		CityToken top = null;
+		CityToken bottom = null;
+		List<CityToken> ctList = new ArrayList<CityToken>();
+
+		while (!addrList.isEmpty()) {
+			String name = getNextAddr(addrList);
+			CityToken firstct = findTopCT(name);
+
+			res.setAddr(firstct.getId(), name, firstct.getLevel());
+			ctList.add(firstct);
+			top = firstct;
+			bottom = firstct;
+			break;
+		}
+
+		CityToken[] tbholder = new CityToken[] { top, bottom };
+		get1blow(tbholder, ctList, addrList, res);
+		top = tbholder[0];
+		bottom = tbholder[1];
+
+		// TODO
+		CityToken ctl3 = res.getAddr(3);
+		if (ctl3 != null) {
+			DFA dfa3 =	DFAInstance.getDFA(ctl3.getId());
+			addrList = dfa3.scan(txt);
+			get2blow(top, bottom, ctList, addrList, res);
+		} else {
+			CityToken ctl2 = res.getAddr(2);
+			if (ctl2 != null) {
+				DFA dfa2 =	DFAInstance.getDFA(ctl2.getId());
+				addrList = dfa2.scan(txt);
+				get2blow(top, bottom, ctList, addrList, res);
+			} else {
+				CityToken ctl1 = res.getAddr(1);
+				if (ctl1 != null) {
+					DFA dfa1 =	DFAInstance.getDFA(ctl1.getId());
+					addrList = dfa1.scan(txt);
+					tbholder[0] = top;
+					tbholder[1] = bottom;
+					get1blow(tbholder, ctList, addrList, res);
+					// 下面不再需求top和bottom所以不再把top和bottom从tbholder中拿出来。
+				}
+			}
+		}
+
+		for (CityToken ct : ctList) {
+			findParentLevel(res, ct);
+		}
+
+		if (res.getCityAddress() == null && res.getProvinceAddress() != null
+				&& dCity.contains(res.getProvinceAddress())) {
+			// 当只识别到一个地址，并且是直辖市的时候
+			List<CityToken> ctl = DataCache.nameMap.get(res.getProvinceAddress() + "市");
+			for (CityToken ct : ctl) {
+				if (ct.getParentId() != null && ct.getParentId().equals(res.getAddr(1).getId())) {
+					res.setAddr(ct.getId(), null, ct.getLevel());
+					break;
+				}
+			}
+		}
+		return res;
+	}
+
+	private static void get1blow(CityToken[] tb, List<CityToken> ctList, List<String> addrList, Address res) {
+		CityToken top = tb[0];
+		CityToken bottom = tb[1];
+
+		while (!addrList.isEmpty()) {
+			String name = getNextAddr(addrList);
+
+			List<CityToken> ccl = getccl(top, bottom, name);
+
+			if (ccl.size() == 1) {
+				CityToken ct = ccl.get(0);
+				if (ct.getLevel() < top.getLevel()) {
+					top = ct;
+					res.setAddr(ct.getId(), name, ct.getLevel());
+					ctList.add(ct);
+				} else {
+					if (ct.getLevel() < 3 // 当前识别到的为省级或市级
+							|| (bottom.getLevel() >= 2 && ct.getLevel() - bottom.getLevel() <= 2) // bottom为市（或以下）级时，当前识别到的与bottom相差在两级以内
+							|| name.length() >= 3 // 当前识别到的地址文字长度至少为3个字
+							|| DataCache.idMap.get(ct.getId()).get(0).getName().endsWith(name) // 当前识别到的地址是一个全称
+					) {
+						bottom = ct;
+						res.setAddr(ct.getId(), name, ct.getLevel());
+						ctList.add(ct);
+					} else {
+						bottom = getNextBottom(addrList, res, top, bottom, ctList, name, ccl);
+					}
+				}
+			} else if (ccl.size() > 1) {
+				bottom = getNextBottom(addrList, res, top, bottom, ctList, name, ccl);
+			}
+		}
+
+		tb[0] = top;
+		tb[1] = bottom;
+	}
+
+	private static void get2blow(CityToken top, CityToken bottom, List<CityToken> ctList, List<String> addrList,
+			Address res) {
+		while (!addrList.isEmpty()) {
+			String name = getNextAddr(addrList);
+
+			List<CityToken> ccl = getccl(top, bottom, name);
+
+			if (ccl.size() == 1) {
+				CityToken ct = ccl.get(0);
+
+				bottom = ct;
+				res.setAddr(ct.getId(), name, ct.getLevel());
+				ctList.add(ct);
+			} else if (ccl.size() > 1) {
+				bottom = getNextBottom(addrList, res, top, bottom, ctList, name, ccl);
+			}
+		}
+	}
 
 	public static Address scan(String txt) {
 		// 中文地址中的空白是没有意义的
@@ -66,7 +194,7 @@ public class AddressScanner {
 					if (ct.getLevel() < 3 // 当前识别到的为省级或市级
 							|| (bottom.getLevel() >= 2 && ct.getLevel() - bottom.getLevel() <= 2) // bottom为市（或以下）级时，当前识别到的与bottom相差在两级以内
 							|| name.length() >= 3 // 当前识别到的地址文字长度至少为3个字
-							|| DataCache.getIdMap().get(ct.getId()).get(0).getName().endsWith(name) // 当前识别到的地址是一个全称
+							|| DataCache.idMap.get(ct.getId()).get(0).getName().endsWith(name) // 当前识别到的地址是一个全称
 					) {
 						bottom = ct;
 						res.setAddr(ct.getId(), name, ct.getLevel());
@@ -87,7 +215,7 @@ public class AddressScanner {
 		if (res.getCityAddress() == null && res.getProvinceAddress() != null
 				&& dCity.contains(res.getProvinceAddress())) {
 			// 当只识别到一个地址，并且是直辖市的时候
-			List<CityToken> ctl = DataCache.getNameMap().get(res.getProvinceAddress() + "市");
+			List<CityToken> ctl = DataCache.nameMap.get(res.getProvinceAddress() + "市");
 			for (CityToken ct : ctl) {
 				if (ct.getParentId() != null && ct.getParentId().equals(res.getAddr(1).getId())) {
 					res.setAddr(ct.getId(), null, ct.getLevel());
@@ -126,7 +254,7 @@ public class AddressScanner {
 	 */
 	private static List<CityToken> getccl(CityToken top, CityToken bottom, String name) {
 		List<CityToken> ccl = new ArrayList<CityToken>();
-		for (CityToken ct : DataCache.getNameMap().get(name)) {
+		for (CityToken ct : DataCache.nameMap.get(name)) {
 			if (ct.getLevel() < top.getLevel()) {
 				if (hasRelationship(ct, top)) {
 					ccl.clear();
@@ -170,7 +298,7 @@ public class AddressScanner {
 
 	private static CityToken findTopCT(String name) {
 		CityToken top = null;
-		for (CityToken ct : DataCache.getNameMap().get(name)) {
+		for (CityToken ct : DataCache.nameMap.get(name)) {
 			if (top == null || ct.getLevel() < top.getLevel()) {
 				top = ct;
 			}

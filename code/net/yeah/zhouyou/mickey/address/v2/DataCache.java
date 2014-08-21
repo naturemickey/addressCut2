@@ -9,22 +9,16 @@ import java.util.Map;
 
 public class DataCache {
 
-	private static final Map<String, List<CityToken>> nameMap;
-	private static final Map<Long, List<CityToken>> idMap;
-
-	public static Map<String, List<CityToken>> getNameMap() {
-		return nameMap;
-	}
-
-	public static Map<Long, List<CityToken>> getIdMap() {
-		return idMap;
-	}
+	public static final Map<String, List<CityToken>> nameMap;
+	public static final Map<Long, List<CityToken>> idMap;
+	public static final Map<Long, List<CityToken>> pIdMap;
 
 	static {
 		long initStart = System.currentTimeMillis();
 
 		Map<String, List<CityToken>> nm = new HashMap<String, List<CityToken>>();
 		Map<Long, List<CityToken>> im = new HashMap<Long, List<CityToken>>();
+		Map<Long, List<CityToken>> pim = new HashMap<Long, List<CityToken>>();
 
 		for (String line : new CityBasedataReader()) {
 			String[] ss = line.split(",");
@@ -76,11 +70,19 @@ public class DataCache {
 					List<CityToken> pctl = im.get(ct.getParentId());
 					if (pctl != null && pctl.size() > 0)
 						ct.parent = pctl.get(0);
+
+					List<CityToken> pctl2 = pim.get(ct.getParentId());
+					if (pctl2 == null) {
+						pctl2 = new ArrayList<CityToken>();
+						pim.put(ct.getParentId(), pctl2);
+					}
+					pctl2.add(ct);
 				}
 			}
 		}
 		nameMap = nm;
 		idMap = im;
+		pIdMap = pim;
 		System.out.println("DataCache init cost:" + (System.currentTimeMillis() - initStart));
 	}
 }
