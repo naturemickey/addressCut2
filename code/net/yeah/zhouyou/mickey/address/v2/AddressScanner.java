@@ -112,13 +112,14 @@ public class AddressScanner {
 
 		// 把上级为空的补上.
 		CityToken ct = bottom;
-		while (ct.getLevel() > 1) {
-			if (ct.getParent() == null)
+		while (ct.getLevel() > 0) {
+			CityToken pct = ct.getParent();
+			if (pct == null)
 				break;
-			if (res.getAddr(ct.getLevel() - 1) == null) {
-				res.setAddr(ct.getId(), null);
+			if (res.getAddr(pct.getLevel()) == null) {
+				res.setAddr(pct.getId(), null);
 			}
-			ct = ct.getParent();
+			ct = pct;
 		}
 		return res;
 	}
