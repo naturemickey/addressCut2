@@ -31,19 +31,7 @@ public class CityBasedataReader implements Iterable<String>, Iterator<String> {
 		}
 		boolean res = line != null;
 		if (!res) {
-			if (br != null)
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			if (fis != null)
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
+			closeAll();
 		}
 		return res;
 	}
@@ -63,4 +51,23 @@ public class CityBasedataReader implements Iterable<String>, Iterator<String> {
 		return this;
 	}
 
+	@Override
+	protected void finalize() {
+		closeAll();
+	}
+
+	private void closeAll() {
+		if (br != null)
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		if (fis != null)
+			try {
+				fis.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	}
 }

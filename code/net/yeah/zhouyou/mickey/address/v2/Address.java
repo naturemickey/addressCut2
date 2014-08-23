@@ -64,10 +64,10 @@ public class Address {
 		return originalAddress;
 	}
 
-	public void setAddr(Long id, String realName, int level) {
+	public void setAddr(Long id, String realName) {
 		// 理论上，以下这行不会有空指针异常或下标超范围异常出现。
 		CityToken addr = DataCache.idMap.get(id).get(0);
-		switch (level) {
+		switch (addr.getLevel()) {
 		case 1:
 			provinceAddress = addr;
 			provinceAddressReal = realName;

@@ -86,7 +86,8 @@ public class DFA implements Serializable {
 			currentState = currentState.tran(a);
 			if (currentState == null) {
 				if (currentAccepted != null) {
-					res.add(currentAccepted.key);
+					if (!res.contains(currentAccepted.key))
+						res.add(currentAccepted.key);
 
 					fromIdx = currentAcceptedIdx + 1;
 					currentAccepted = null;
@@ -102,7 +103,8 @@ public class DFA implements Serializable {
 			}
 		}
 		if (currentAccepted != null) {
-			res.add(currentAccepted.key);
+			if (!res.contains(currentAccepted.key))
+				res.add(currentAccepted.key);
 		}
 		return res;
 	}

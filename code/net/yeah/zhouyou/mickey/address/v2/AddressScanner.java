@@ -31,24 +31,20 @@ public class AddressScanner {
 		txt = p.matcher(txt).replaceAll("");
 
 		List<String> addrList = dfa.scan(txt);
-		List<CityToken> ctList = new ArrayList<CityToken>();
 
 		if (addrList.size() == 0)
 			return new Address(txt);
 
-		Address res = matchAddress(txt, addrList, ctList);
+		Address res = matchAddress(txt, addrList);
 
-		if (exactMatch4Level) {
-			if (res.getAddr(4) == null) {
-				CityToken city = res.getAddr(2);
-				if (city != null) {
-					// 用当前城市的DFA再重新匹配一遍
-					ctList.clear();
-					DFA cityDFA = DFAInstance.getDFA(city.getId());
-					addrList = cityDFA.scan(txt);
-					// 此处不需要判断addrList是否为空，因为DFAInstance.dfa匹配不为空，则当前的小dfa的匹配一定不会为空
-					res = matchAddress(txt, addrList, ctList);
-				}
+		if (exactMatch4Level && res.getAddr(4) == null) {
+			CityToken ct = res.getAddr(2);
+			if (ct != null) {
+				// 用当前城市的DFA再重新匹配一遍
+				DFA cityDFA = DFAInstance.getDFA(ct.getId());
+				addrList = cityDFA.scan(txt);
+				// 此处不需要判断addrList是否为空，因为DFAInstance.dfa匹配不为空，则当前的小dfa的匹配一定不会为空
+				res = matchAddress(txt, addrList);
 			}
 		}
 
@@ -58,7 +54,7 @@ public class AddressScanner {
 			List<CityToken> ctl = DataCache.nameMap.get(res.getProvinceAddress() + "市");
 			for (CityToken ct : ctl) {
 				if (ct.getParentId() != null && ct.getParentId().equals(res.getAddr(1).getId())) {
-					res.setAddr(ct.getId(), null, ct.getLevel());
+					res.setAddr(ct.getId(), null);
 					break;
 				}
 			}
@@ -67,28 +63,27 @@ public class AddressScanner {
 		return res;
 	}
 
-	private static Address matchAddress(String txt, List<String> addrList, List<CityToken> ctList) {
+	private static Address matchAddress(String txt, List<String> addrList) {
 		Address res = new Address(txt);
 		CityToken top = null;
 		CityToken bottom = null;
 
 		while (!addrList.isEmpty()) {
-			String name = getNextAddr(addrList);
+			String name = addrList.remove(0);
 			CityToken firstct = findTopCT(name);
 
 			// 中国人写地址一般是“省”、“市”、“区”，对于BSP来说，商家也很少会省略“省”和“市”，如果直接写“区”以下的地址，则全国的地址重名的过多了。
 			if (firstct.getLevel() > 3) {
 				continue;
 			}
-			res.setAddr(firstct.getId(), name, firstct.getLevel());
-			ctList.add(firstct);
+			res.setAddr(firstct.getId(), name);
 			top = firstct;
 			bottom = firstct;
 			break;
 		}
 
 		while (!addrList.isEmpty()) {
-			String name = getNextAddr(addrList);
+			String name = addrList.remove(0);
 
 			List<CityToken> ccl = getccl(top, bottom, name);
 
@@ -96,8 +91,7 @@ public class AddressScanner {
 				CityToken ct = ccl.get(0);
 				if (ct.getLevel() < top.getLevel()) {
 					top = ct;
-					res.setAddr(ct.getId(), name, ct.getLevel());
-					ctList.add(ct);
+					res.setAddr(ct.getId(), name);
 				} else {
 					if (ct.getLevel() < 3 // 当前识别到的为省级或市级
 							|| (bottom.getLevel() >= 2 && ct.getLevel() - bottom.getLevel() <= 2) // bottom为市（或以下）级时，当前识别到的与bottom相差在两级以内
@@ -105,27 +99,33 @@ public class AddressScanner {
 							|| DataCache.idMap.get(ct.getId()).get(0).getName().endsWith(name) // 当前识别到的地址是一个全称
 					) {
 						bottom = ct;
-						res.setAddr(ct.getId(), name, ct.getLevel());
-						ctList.add(ct);
+						res.setAddr(ct.getId(), name);
 					} else {
-						bottom = getNextBottom(addrList, res, top, bottom, ctList, name, ccl);
+						bottom = getNextBottom(addrList, res, top, bottom, name, ccl);
 					}
 				}
 			} else if (ccl.size() > 1) {
-				bottom = getNextBottom(addrList, res, top, bottom, ctList, name, ccl);
+				bottom = getNextBottom(addrList, res, top, bottom, name, ccl);
 			}
 		}
 
-		for (CityToken ct : ctList) {
-			findParentLevel(res, ct);
+		// 把上级为空的补上.
+		CityToken ct = bottom;
+		while (ct.getLevel() > 1) {
+			if (ct.getParent() == null)
+				break;
+			if (res.getAddr(ct.getLevel() - 1) == null) {
+				res.setAddr(ct.getId(), null);
+			}
+			ct = ct.getParent();
 		}
 		return res;
 	}
 
 	private static CityToken getNextBottom(List<String> addrList, Address res, CityToken top, CityToken bottom,
-			List<CityToken> ctList, String name, List<CityToken> ccl) {
+			String name, List<CityToken> ccl) {
 		if (!addrList.isEmpty()) {
-			String name2 = getNextAddr(addrList);
+			String name2 = addrList.remove(0);
 			for (CityToken cct : ccl) {
 				List<CityToken> ccl2 = getccl(top, cct, name2);
 				if (!ccl2.isEmpty()) {
@@ -133,10 +133,8 @@ public class AddressScanner {
 					CityToken ct2 = ccl2.get(0);
 					if (ct2.getLevel() > cct.getLevel()) {
 						bottom = ct2;
-						res.setAddr(cct.getId(), name, cct.getLevel());
-						res.setAddr(ct2.getId(), name2, ct2.getLevel());
-						ctList.add(cct);
-						ctList.add(ct2);
+						res.setAddr(cct.getId(), name);
+						res.setAddr(ct2.getId(), name2);
 					}
 				}
 			}
@@ -171,24 +169,6 @@ public class AddressScanner {
 			}
 		}
 		return ccl;
-	}
-
-	private static String getNextAddr(List<String> addrList) {
-		String name = addrList.remove(0);
-		while (addrList.remove(name))
-			;
-		return name;
-	}
-
-	private static void findParentLevel(Address res, CityToken ct) {
-		while (ct.getLevel() > 1) {
-			if (ct.getParent() == null)
-				break;
-			if (res.getAddr(ct.getLevel() - 1) != null)
-				break;
-			ct = ct.getParent();
-			res.setAddr(ct.getId(), null, ct.getLevel());
-		}
 	}
 
 	private static CityToken findTopCT(String name) {

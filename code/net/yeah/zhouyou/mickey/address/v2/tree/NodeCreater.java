@@ -3,7 +3,6 @@ package net.yeah.zhouyou.mickey.address.v2.tree;
 public class NodeCreater {
 
 	public static INode create(String name) {
-
 		char[] cs = name.toCharArray();
 		int len = cs.length;
 		INode root = new Leaf(cs[0]);
