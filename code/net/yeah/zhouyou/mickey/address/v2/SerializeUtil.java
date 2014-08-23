@@ -17,7 +17,7 @@ public class SerializeUtil {
 			oos.writeObject(obj);
 			oos.flush();
 		} catch (Exception e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 		} finally {
 			if (fos != null)
 				try {
@@ -45,7 +45,7 @@ public class SerializeUtil {
 			ois = new ObjectInputStream(fis);
 			t = (T) ois.readObject();
 		} catch (Exception e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 		} finally {
 			if (fis != null)
 				try {

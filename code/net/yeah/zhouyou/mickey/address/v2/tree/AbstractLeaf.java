@@ -1,9 +1,8 @@
 package net.yeah.zhouyou.mickey.address.v2.tree;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
-
-import net.yeah.zhouyou.mickey.address.v2.CollUtils;
 
 public abstract class AbstractLeaf extends AbstractNode implements INode {
 
@@ -29,12 +28,13 @@ public abstract class AbstractLeaf extends AbstractNode implements INode {
 		return fop;
 	}
 
-	Set<AbstractLeaf> fp = null;
+	private Set<AbstractLeaf> fp = new HashSet<AbstractLeaf>();
+	{
+		fp.add(this);
+	}
 
 	@Override
-	public Set<AbstractLeaf> firstpos() {
-		if (fp == null)
-			fp = CollUtils.asSet((AbstractLeaf) this);
+	final public Set<AbstractLeaf> firstpos() {
 		return fp;
 	}
 
