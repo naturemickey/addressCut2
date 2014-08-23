@@ -109,10 +109,18 @@ public class Address {
 		return provinceAddress.getName();
 	}
 
+	public CityToken getProvince() {
+		return provinceAddress;
+	}
+
 	public String getCityAddress() {
 		if (cityAddress == null)
 			return null;
 		return cityAddress.getName();
+	}
+
+	public CityToken getCity() {
+		return cityAddress;
 	}
 
 	public String getAreaAddress() {
@@ -121,9 +129,17 @@ public class Address {
 		return areaAddress.getName();
 	}
 
+	public CityToken getArea() {
+		return areaAddress;
+	}
+
 	public String getTownAddress() {
 		if (townAddress == null)
 			return null;
 		return townAddress.getName();
+	}
+
+	public CityToken getTown() {
+		return townAddress;
 	}
 }

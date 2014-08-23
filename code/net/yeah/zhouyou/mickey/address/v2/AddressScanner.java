@@ -37,15 +37,12 @@ public class AddressScanner {
 
 		Address res = matchAddress(txt, addrList);
 
-		if (exactMatch4Level && res.getAddr(4) == null) {
-			CityToken ct = res.getAddr(2);
-			if (ct != null) {
-				// 用当前城市的DFA再重新匹配一遍
-				DFA cityDFA = DFAInstance.getDFA(ct.getId());
-				addrList = cityDFA.scan(txt);
-				// 此处不需要判断addrList是否为空，因为DFAInstance.dfa匹配不为空，则当前的小dfa的匹配一定不会为空
-				res = matchAddress(txt, addrList);
-			}
+		if (exactMatch4Level && res.getTown() == null && res.getCity() != null) {
+			// 用当前城市的DFA再重新匹配一遍
+			DFA cityDFA = DFAInstance.getDFA(res.getCity().getId());
+			addrList = cityDFA.scan(txt);
+			// 此处不需要判断addrList是否为空，因为DFAInstance.dfa匹配不为空，则当前的小dfa的匹配一定不会为空
+			res = matchAddress(txt, addrList);
 		}
 
 		if (res.getCityAddress() == null && res.getProvinceAddress() != null
@@ -54,7 +51,7 @@ public class AddressScanner {
 			List<CityToken> ctl = DataCache.nameMap.get(res.getProvinceAddress() + "市");
 			for (int i = 0; i < ctl.size(); ++i) {
 				CityToken ct = ctl.get(0);
-				if (ct.getParentId() != null && ct.getParentId().equals(res.getAddr(1).getId())) {
+				if (ct.getParentId() != null && ct.getParentId().equals(res.getProvince().getId())) {
 					res.setAddr(ct.getId(), null);
 					break;
 				}
