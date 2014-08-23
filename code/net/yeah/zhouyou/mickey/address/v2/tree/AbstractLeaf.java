@@ -30,6 +30,7 @@ public abstract class AbstractLeaf extends AbstractNode implements INode {
 
 	private Set<AbstractLeaf> fp = new HashSet<AbstractLeaf>();
 	{
+		// 叶子节点的firstpos中一定只有自己，所以这里就直接在构造中加好。
 		fp.add(this);
 	}
 
