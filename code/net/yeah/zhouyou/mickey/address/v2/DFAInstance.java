@@ -11,13 +11,12 @@ import net.yeah.zhouyou.mickey.address.v2.tree.NodeCreater;
 public class DFAInstance {
 
 	public static final DFA dfa;
-	public static final DFA dfa123;
 	private static final Map<Long, DFA> dfaMap = new ConcurrentHashMap<Long, DFA>();
 
 	public static DFA getDFA(Long id) {
 		DFA res = dfaMap.get(id);
 		if (res == null) {
-			synchronized (dfaMap) {
+			synchronized (DFAInstance.class) {
 				res = dfaMap.get(id);
 				if (res == null) {
 					List<INode> nodeList = getNodeList(id, true);
@@ -78,17 +77,5 @@ public class DFAInstance {
 			dfa = fa;
 		}
 		System.out.println("DFA init cost:" + (System.currentTimeMillis() - initStart));
-
-		List<INode> nodeList = new ArrayList<INode>();
-		for (Map.Entry<String, List<CityToken>> e : DataCache.nameMap.entrySet()) {
-			for (CityToken ct : e.getValue()) {
-				if (ct.getLevel() <= 3) {
-					nodeList.add(NodeCreater.create(e.getKey()));
-					break;
-				}
-			}
-		}
-
-		dfa123 = DFA.create(NodeCreater.merge(nodeList.toArray(new INode[nodeList.size()])));
 	}
 }
