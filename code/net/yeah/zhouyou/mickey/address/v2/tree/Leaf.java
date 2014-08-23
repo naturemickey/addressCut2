@@ -1,7 +1,7 @@
 package net.yeah.zhouyou.mickey.address.v2.tree;
 
 
-public class Leaf extends AbstractLeaf implements INode {
+public final class Leaf extends AbstractLeaf implements INode {
 
 	private char input;
 

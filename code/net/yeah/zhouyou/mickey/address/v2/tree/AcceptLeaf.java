@@ -3,7 +3,7 @@ package net.yeah.zhouyou.mickey.address.v2.tree;
 import java.util.Collections;
 import java.util.Set;
 
-public class AcceptLeaf extends AbstractLeaf implements INode {
+public final class AcceptLeaf extends AbstractLeaf implements INode {
 
 	private String key;
 

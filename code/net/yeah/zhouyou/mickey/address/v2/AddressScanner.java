@@ -52,7 +52,8 @@ public class AddressScanner {
 				&& dCity.contains(res.getProvinceAddress())) {
 			// 当只识别到一个地址，并且是直辖市的时候
 			List<CityToken> ctl = DataCache.nameMap.get(res.getProvinceAddress() + "市");
-			for (CityToken ct : ctl) {
+			for (int i = 0; i < ctl.size(); ++i) {
+				CityToken ct = ctl.get(0);
 				if (ct.getParentId() != null && ct.getParentId().equals(res.getAddr(1).getId())) {
 					res.setAddr(ct.getId(), null);
 					break;
@@ -126,7 +127,8 @@ public class AddressScanner {
 			String name, List<CityToken> ccl) {
 		if (!addrList.isEmpty()) {
 			String name2 = addrList.remove(0);
-			for (CityToken cct : ccl) {
+			for (int i = 0; i < ccl.size(); ++i) {
+				CityToken cct = ccl.get(i);
 				List<CityToken> ccl2 = getccl(top, cct, name2);
 				if (!ccl2.isEmpty()) {
 					// 两级关联之后，就随意取一个。因为此时至少已是三级地址，在同一个区或县内部的冲突就比较小了。
@@ -147,7 +149,9 @@ public class AddressScanner {
 	 */
 	private static List<CityToken> getccl(CityToken top, CityToken bottom, String name) {
 		List<CityToken> ccl = new ArrayList<CityToken>();
-		for (CityToken ct : DataCache.nameMap.get(name)) {
+		List<CityToken> nctl = DataCache.nameMap.get(name);
+		for (int i = 0; i < nctl.size(); ++i) {
+			CityToken ct = nctl.get(i);
 			if (ct.getLevel() < top.getLevel()) {
 				if (hasRelationship(ct, top)) {
 					ccl.clear();
@@ -173,7 +177,9 @@ public class AddressScanner {
 
 	private static CityToken findTopCT(String name) {
 		CityToken top = null;
-		for (CityToken ct : DataCache.nameMap.get(name)) {
+		List<CityToken> nctl = DataCache.nameMap.get(name);
+		for (int i = 0; i < nctl.size(); ++i) {
+			CityToken ct = nctl.get(i);
 			if (top == null || ct.getLevel() < top.getLevel()) {
 				top = ct;
 			}
@@ -182,10 +188,9 @@ public class AddressScanner {
 	}
 
 	private static boolean hasRelationship(CityToken pct, CityToken ct) {
-		if (ct.getParentId() == null || ct.getLevel() <= pct.getLevel())
-			return false;
+		if (ct.getParentId() == null || ct.getLevel() <= pct.getLevel() ||
 		// 大于两个级别差的关联，相对来说准确率比较低。
-		if (ct.getLevel() - pct.getLevel() > 2)
+				ct.getLevel() - pct.getLevel() > 2)
 			return false;
 		boolean res = ct.getParentId().equals(pct.getId());
 		if (!res) {

@@ -37,7 +37,10 @@ public class DataCache {
 					ctList = new ArrayList<CityToken>();
 					nm.put(name, ctList);
 				}
-				ctList.add(ct);
+				if (ctList.isEmpty() || ctList.get(0).getLevel() < ct.getLevel())
+					ctList.add(ct);
+				else
+					ctList.add(0, ct);
 
 				List<CityToken> actList = im.get(ct.getId());
 				if (actList == null) {
