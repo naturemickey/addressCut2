@@ -6,8 +6,7 @@ import java.util.Set;
 public class CollUtils {
 
 	public static <T> Set<T> union(Set<T> c1, Set<T> c2) {
-		Set<T> res = new HashSet<T>();
-		res.addAll(c1);
+		Set<T> res = new HashSet<T>(c1);
 		res.addAll(c2);
 		return res;
 	}
