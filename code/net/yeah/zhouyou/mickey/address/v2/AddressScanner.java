@@ -91,8 +91,9 @@ public class AddressScanner {
 					top = ct;
 					res.setAddr(ct.getId(), name);
 				} else {
-					if (ct.getLevel() < 3 // 当前识别到的为省级或市级
-							|| (bottom.getLevel() >= 2 && ct.getLevel() - bottom.getLevel() <= 2) // bottom为市（或以下）级时，当前识别到的与bottom相差在两级以内
+					if (ct.getLevel() <= 2 // 当前识别到的为省级或市级
+							|| bottom.getLevel() >= 3 // bottom在三级地址以下，则ct的范围比较小
+							|| ct.getLevel() - bottom.getLevel() <= 2 // bottom为二级时，当前识别到的与bottom相差在两级以内
 							|| name.length() >= 3 // 当前识别到的地址文字长度至少为3个字
 							|| DataCache.idMap.get(ct.getId()).get(0).getName().endsWith(name) // 当前识别到的地址是一个全称
 					) {
