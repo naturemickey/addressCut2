@@ -23,9 +23,9 @@ public class DFAInstance {
 			synchronized (DFAInstance.class) {
 				res = dfaMap.get(id);
 				if (res == null) {
-					Set<String> nameList = getNodeNames(id, true);
-					if (nameList.size() > 0) {
-						res = DFA.create(NodeCreater.create(nameList));
+					Set<String> names = getNodeNames(id, true);
+					if (names.size() > 0) {
+						res = DFA.create(NodeCreater.create(names));
 					} else {
 						res = PRESENT;
 					}
