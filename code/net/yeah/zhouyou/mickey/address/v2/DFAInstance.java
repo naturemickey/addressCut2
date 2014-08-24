@@ -1,8 +1,10 @@
 package net.yeah.zhouyou.mickey.address.v2;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.yeah.zhouyou.mickey.address.v2.tree.INode;
@@ -13,17 +15,19 @@ public class DFAInstance {
 	public static final DFA dfa;
 	private static final Map<Long, DFA> dfaMap = new ConcurrentHashMap<Long, DFA>();
 
+	private static final DFA PRESENT = DFA.create(NodeCreater.create(" "));
+
 	public static DFA getDFA(Long id) {
 		DFA res = dfaMap.get(id);
 		if (res == null) {
 			synchronized (DFAInstance.class) {
 				res = dfaMap.get(id);
 				if (res == null) {
-					List<INode> nodeList = getNodeList(id, true);
-					if (nodeList.size() > 0) {
-						res = DFA.create(NodeCreater.merge(nodeList.toArray(new INode[nodeList.size()])));
+					Set<String> nameList = getNodeNames(id, true);
+					if (nameList.size() > 0) {
+						res = DFA.create(NodeCreater.create(nameList));
 					} else {
-						res = DFA.create(NodeCreater.create(" "));
+						res = PRESENT;
 					}
 					dfaMap.put(id, res);
 				}
@@ -32,31 +36,35 @@ public class DFAInstance {
 		return res;
 	}
 
-	private static List<INode> getNodeList(Long id, boolean containParent) {
-		List<INode> nodeList = new ArrayList<INode>();
-		List<CityToken> ctList = DataCache.pIdMap.get(id);
-		if (ctList != null) {
-			for (CityToken ct : ctList) {
-				nodeList.add(NodeCreater.create(ct.getName()));
-				nodeList.addAll(getNodeList(ct.getId(), false));
+	private static Set<String> getNodeNames(Long id, boolean containParent) {
+		Set<String> nameList = new HashSet<String>();
 
-				if (containParent) {
-					CityToken parent = ct.parent;
-					while (parent != null) {
-						List<CityToken> ctList2 = DataCache.idMap.get(parent.getId());
-						if (ctList2 != null && ctList2.size() > 0) {
-							for (CityToken ct2 : ctList2) {
-								nodeList.add(NodeCreater.create(ct2.getName()));
-							}
-							parent = ctList2.get(0).parent;
-						} else {
-							parent = null;
-						}
+		List<CityToken> ctList = DataCache.idMap.get(id);
+		for (int i = 0; i < ctList.size(); ++i) {
+			nameList.add(ctList.get(i).getName());
+		}
+		CityToken parent = ctList.get(0).getParent();
+
+		ctList = DataCache.pIdMap.get(id);
+		if (ctList != null) {
+			for (int i = 0; i < ctList.size(); ++i) {
+				nameList.addAll(getNodeNames(ctList.get(i).getId(), false));
+			}
+		}
+		if (containParent) {
+			while (parent != null) {
+				List<CityToken> ctList2 = DataCache.idMap.get(parent.getId());
+				if (ctList2 != null && ctList2.size() > 0) {
+					for (int i = 0; i < ctList2.size(); ++i) {
+						nameList.add(ctList2.get(i).getName());
 					}
+					parent = ctList2.get(0).parent;
+				} else {
+					parent = null;
 				}
 			}
 		}
-		return nodeList;
+		return nameList;
 	}
 
 	static {

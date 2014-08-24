@@ -1,5 +1,7 @@
 package net.yeah.zhouyou.mickey.address.v2.tree;
 
+import java.util.Set;
+
 public class NodeCreater {
 
 	public static INode create(String name) {
@@ -29,6 +31,16 @@ public class NodeCreater {
 			nodes2[idx] = nodes[nodes.length - 1];
 		}
 		return merge(nodes2);
+	}
+
+	public static INode create(Set<String> names) {
+		int len = names.size();
+		INode[] nodes = new INode[len];
+		int idx = -1;
+		for (String name : names) {
+			nodes[++idx] = create(name);
+		}
+		return merge(nodes);
 	}
 
 }
