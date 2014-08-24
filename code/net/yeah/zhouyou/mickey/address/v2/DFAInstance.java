@@ -1,5 +1,7 @@
 package net.yeah.zhouyou.mickey.address.v2;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,26 +37,37 @@ public class DFAInstance {
 	}
 
 	private static Set<String> getNodeNames(Long id, boolean containParent) {
-		Set<String> nameList = new HashSet<String>();
+		Set<String> names = new HashSet<String>();
 
 		List<CityToken> ctList = DataCache.idMap.get(id);
 		for (int i = 0; i < ctList.size(); ++i) {
-			nameList.add(ctList.get(i).getName());
+			names.add(ctList.get(i).getName());
 		}
 		CityToken parent = ctList.get(0).getParent();
 
-		ctList = DataCache.pIdMap.get(id);
-		if (ctList != null) {
-			for (int i = 0; i < ctList.size(); ++i) {
-				nameList.addAll(getNodeNames(ctList.get(i).getId(), false));
+		Set<Long> addeds = new HashSet<Long>();
+		Deque<Long> pids = new ArrayDeque<Long>();
+		pids.push(id);
+		while (!pids.isEmpty()) {
+			Long pid = pids.pop();
+			if (addeds.add(pid)) {
+				ctList = DataCache.pIdMap.get(pid);
+				if (ctList != null) {
+					for (int i = 0; i < ctList.size(); ++i) {
+						CityToken ct = ctList.get(i);
+						names.add(ct.getName());
+						pids.push(ct.getId());
+					}
+				}
 			}
 		}
+
 		if (containParent) {
 			while (parent != null) {
 				List<CityToken> ctList2 = DataCache.idMap.get(parent.getId());
 				if (ctList2 != null && ctList2.size() > 0) {
 					for (int i = 0; i < ctList2.size(); ++i) {
-						nameList.add(ctList2.get(i).getName());
+						names.add(ctList2.get(i).getName());
 					}
 					parent = ctList2.get(0).parent;
 				} else {
@@ -62,7 +75,7 @@ public class DFAInstance {
 				}
 			}
 		}
-		return nameList;
+		return names;
 	}
 
 	static {
