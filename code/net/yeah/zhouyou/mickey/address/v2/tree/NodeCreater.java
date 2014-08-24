@@ -20,8 +20,7 @@ public class NodeCreater {
 			return nodes[0];
 
 		int mod2 = nodes.length % 2;
-		int len = nodes.length / 2 + mod2;
-		INode[] nodes2 = new INode[len];
+		INode[] nodes2 = new INode[nodes.length / 2 + mod2];
 		int idx = 0;
 		for (int i = 1; i < nodes.length; i += 2) {
 			nodes2[idx++] = new Node(Node.Type.OR, nodes[i - 1], nodes[i]);
@@ -34,8 +33,7 @@ public class NodeCreater {
 	}
 
 	public static INode create(Set<String> names) {
-		int len = names.size();
-		INode[] nodes = new INode[len];
+		INode[] nodes = new INode[names.size()];
 		int idx = -1;
 		for (String name : names) {
 			nodes[++idx] = create(name);
