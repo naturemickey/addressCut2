@@ -64,9 +64,12 @@ public class Address {
 		return originalAddress;
 	}
 
-	public void setAddr(Long id, String realName) {
-		// 理论上，以下这行不会有空指针异常或下标超范围异常出现。
-		CityToken addr = DataCache.idMap.get(id).get(0);
+	/**
+	 * @param addr
+	 *            此参数要为标准地址
+	 * @param realName
+	 */
+	public void setAddr(CityToken addr, String realName) {
 		switch (addr.getLevel()) {
 		case 1:
 			provinceAddress = addr;

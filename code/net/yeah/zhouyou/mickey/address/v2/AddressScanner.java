@@ -62,10 +62,10 @@ public class AddressScanner {
 	}
 
 	private static void setAddr(Address res, Long id, String name, List<String> addrList) {
-		res.setAddr(id, name);
+		List<CityToken> ctList = DataCache.idMap.get(id);
+		res.setAddr(ctList.get(0), name);
 
 		// 以下移除可能重复识别的地址名称，性能会有影响。
-		List<CityToken> ctList = DataCache.idMap.get(id);
 		int len = ctList.size();
 		for (int i = 0; i < len; ++i) {
 			String n = ctList.get(i).getName();
