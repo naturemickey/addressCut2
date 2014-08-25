@@ -52,13 +52,28 @@ public class AddressScanner {
 			for (int i = 0; i < ctl.size(); ++i) {
 				CityToken ct = ctl.get(0);
 				if (ct.getParentId() != null && ct.getParentId().equals(res.getProvince().getId())) {
-					res.setAddr(ct.getId(), null);
+					setAddr(res, ct.getId(), null, addrList);
 					break;
 				}
 			}
 		}
 
 		return res;
+	}
+
+	private static void setAddr(Address res, Long id, String name, List<String> addrList) {
+		res.setAddr(id, name);
+
+		// 以下移除可能重复识别的地址名称，性能会有影响。
+		List<CityToken> ctList = DataCache.idMap.get(id);
+		int len = ctList.size();
+		for (int i = 0; i < len; ++i) {
+			String n = ctList.get(i).getName();
+			if (n != null) {
+				while (addrList.remove(n))
+					;
+			}
+		}
 	}
 
 	private static Address matchAddress(String txt, List<String> addrList) {
@@ -74,7 +89,7 @@ public class AddressScanner {
 			if (firstct.getLevel() > 3) {
 				continue;
 			}
-			res.setAddr(firstct.getId(), name);
+			setAddr(res, firstct.getId(), name, addrList);
 			top = firstct;
 			bottom = firstct;
 			break;
@@ -89,7 +104,7 @@ public class AddressScanner {
 				CityToken ct = ccl.get(0);
 				if (ct.getLevel() < top.getLevel()) {
 					top = ct;
-					res.setAddr(ct.getId(), name);
+					setAddr(res, ct.getId(), name, addrList);
 				} else {
 					if (ct.getLevel() <= 2 // 当前识别到的为省级或市级
 							|| bottom.getLevel() >= 3 // bottom在三级地址以下，则ct的范围比较小
@@ -98,7 +113,7 @@ public class AddressScanner {
 							|| DataCache.idMap.get(ct.getId()).get(0).getName().endsWith(name) // 当前识别到的地址是一个全称
 					) {
 						bottom = ct;
-						res.setAddr(ct.getId(), name);
+						setAddr(res, ct.getId(), name, addrList);
 					} else {
 						bottom = getNextBottom(addrList, res, top, bottom, name, ccl);
 					}
@@ -115,7 +130,7 @@ public class AddressScanner {
 			if (pct == null)
 				break;
 			if (res.getAddr(pct.getLevel()) == null) {
-				res.setAddr(pct.getId(), null);
+				setAddr(res, pct.getId(), null, addrList);
 			}
 			ct = pct;
 		}
@@ -134,8 +149,8 @@ public class AddressScanner {
 					CityToken ct2 = ccl2.get(0);
 					if (ct2.getLevel() > cct.getLevel()) {
 						bottom = ct2;
-						res.setAddr(cct.getId(), name);
-						res.setAddr(ct2.getId(), name2);
+						setAddr(res, cct.getId(), name, addrList);
+						setAddr(res, ct2.getId(), name2, addrList);
 					}
 				}
 			}
