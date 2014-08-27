@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.yeah.zhouyou.mickey.address.v2.tree.AcceptLeaf;
 import net.yeah.zhouyou.mickey.address.v2.tree.NodeCreater;
 
 public class DFAInstance {
@@ -15,7 +16,7 @@ public class DFAInstance {
 	public static final DFA dfa;
 	private static final Map<Long, DFA> dfaMap = new ConcurrentHashMap<Long, DFA>();
 
-	private static final DFA PRESENT = DFA.create(NodeCreater.create(" "));
+	private static final DFA PRESENT = DFA.create(new AcceptLeaf(""));
 
 	public static DFA getDFA(Long id) {
 		DFA res = dfaMap.get(id);
