@@ -6,16 +6,15 @@ public class NodeCreater {
 
 	public static INode create(String name) {
 		char[] cs = name.toCharArray();
-		int len = cs.length;
-		INode root = new Leaf(cs[0]);
-		for (int i = 1; i < len; ++i) {
-			root = new Node(Node.Type.CAT, root, new Leaf(cs[i]));
+		INode[] nodes = new INode[cs.length + 1];
+		for (int i = 0; i < cs.length; ++i) {
+			nodes[i] = new Leaf(cs[i]);
 		}
-
-		return new Node(Node.Type.CAT, root, new AcceptLeaf(name));
+		nodes[cs.length] = new AcceptLeaf(name);
+		return merge(Node.Type.CAT, nodes);
 	}
 
-	public static INode merge(INode... nodes) {
+	private static INode merge(Node.Type type, INode... nodes) {
 		if (nodes.length == 1)
 			return nodes[0];
 
@@ -23,13 +22,13 @@ public class NodeCreater {
 		INode[] nodes2 = new INode[nodes.length / 2 + mod2];
 		int idx = 0;
 		for (int i = 1; i < nodes.length; i += 2) {
-			nodes2[idx++] = new Node(Node.Type.OR, nodes[i - 1], nodes[i]);
+			nodes2[idx++] = new Node(type, nodes[i - 1], nodes[i]);
 		}
 
 		if (mod2 == 1) {
 			nodes2[idx] = nodes[nodes.length - 1];
 		}
-		return merge(nodes2);
+		return merge(type, nodes2);
 	}
 
 	public static INode create(Set<String> names) {
@@ -38,7 +37,7 @@ public class NodeCreater {
 		for (String name : names) {
 			nodes[++idx] = create(name);
 		}
-		return merge(nodes);
+		return merge(Node.Type.OR,nodes);
 	}
 
 }
