@@ -49,7 +49,7 @@ public class AddressScanner {
 				&& dCity.contains(res.getProvinceAddress())) {
 			// 当只识别到一个地址，并且是直辖市的时候
 			List<CityToken> ctl = DataCache.nameMap.get(res.getProvinceAddress() + "市");
-			for (int i = 0; i < ctl.size(); ++i) {
+			for (int i = 0, n = ctl.size(); i < n; ++i) {
 				CityToken ct = ctl.get(0);
 				if (ct.getParentId() != null && ct.getParentId().equals(res.getProvince().getId())) {
 					setAddr(res, ct.getId(), null, addrList);
@@ -66,8 +66,7 @@ public class AddressScanner {
 		res.setAddr(ctList.get(0), name);
 
 		// 以下移除可能重复识别的地址名称，性能会有影响。
-		int len = ctList.size();
-		for (int i = 0; i < len; ++i) {
+		for (int i = 0, len = ctList.size(); i < len; ++i) {
 			String n = ctList.get(i).getName();
 			if (n != null) {
 				while (addrList.remove(n))
@@ -141,7 +140,7 @@ public class AddressScanner {
 			String name, List<CityToken> ccl) {
 		if (!addrList.isEmpty()) {
 			String name2 = addrList.remove(0);
-			for (int i = 0; i < ccl.size(); ++i) {
+			for (int i = 0, n = ccl.size(); i < n; ++i) {
 				CityToken cct = ccl.get(i);
 				List<CityToken> ccl2 = getccl(top, cct, name2);
 				if (!ccl2.isEmpty()) {
@@ -164,7 +163,7 @@ public class AddressScanner {
 	private static List<CityToken> getccl(CityToken top, CityToken bottom, String name) {
 		List<CityToken> ccl = new ArrayList<CityToken>();
 		List<CityToken> nctl = DataCache.nameMap.get(name);
-		for (int i = 0; i < nctl.size(); ++i) {
+		for (int i = 0, n = nctl.size(); i < n; ++i) {
 			CityToken ct = nctl.get(i);
 			if (ct.getLevel() < top.getLevel()) {
 				if (hasRelationship(ct, top)) {
@@ -192,7 +191,7 @@ public class AddressScanner {
 	private static CityToken findTopCT(String name) {
 		CityToken top = null;
 		List<CityToken> nctl = DataCache.nameMap.get(name);
-		for (int i = 0; i < nctl.size(); ++i) {
+		for (int i = 0, n = nctl.size(); i < n; ++i) {
 			CityToken ct = nctl.get(i);
 			if (top == null || ct.getLevel() < top.getLevel()) {
 				top = ct;

@@ -7,7 +7,7 @@ public class NodeCreater {
 	public static INode create(String name) {
 		char[] cs = name.toCharArray();
 		INode[] nodes = new INode[cs.length + 1];
-		for (int i = 0; i < cs.length; ++i) {
+		for (int i = 0, n = cs.length; i < n; ++i) {
 			nodes[i] = new Leaf(cs[i]);
 		}
 		nodes[cs.length] = new AcceptLeaf(name);
@@ -19,7 +19,7 @@ public class NodeCreater {
 			int mod2 = nodes.length % 2;
 			INode[] nodes2 = new INode[nodes.length / 2 + mod2];
 			int idx = 0;
-			for (int i = 1; i < nodes.length; i += 2) {
+			for (int i = 1, n = nodes.length; i < n; i += 2) {
 				nodes2[idx++] = new Node(type, nodes[i - 1], nodes[i]);
 			}
 

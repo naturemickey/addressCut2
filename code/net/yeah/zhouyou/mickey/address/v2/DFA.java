@@ -81,7 +81,7 @@ public class DFA implements Serializable {
 
 		char[] bl = s.toCharArray();
 		List<String> res = new ArrayList<String>();
-		for (; currentIdx < bl.length; ++currentIdx) {
+		for (int len = bl.length; currentIdx < len; ++currentIdx) {
 			char a = bl[currentIdx];
 			currentState = currentState.tran(a);
 			if (currentState == null) {

@@ -54,13 +54,12 @@ public class DFAInstance {
 	 * 获取当前id对应的节点的名字放到names中，并返回当前节点的上线节点。
 	 */
 	private static CityToken addMyName(Long id, Set<String> names) {
+		// 此处获得的ctList不可能是空的，也不可能size为0
 		List<CityToken> ctList = DataCache.idMap.get(id);
-		for (int i = 0; i < ctList.size(); ++i) {
+		for (int i = 0, n = ctList.size(); i < n; ++i) {
 			names.add(ctList.get(i).getName());
 		}
-		if (ctList != null && ctList.size() > 0)
-			return ctList.get(0).getParent();
-		return null;
+		return ctList.get(0).getParent();
 	}
 
 	/**
@@ -76,7 +75,7 @@ public class DFAInstance {
 			if (addeds.add(pid)) {
 				ctList = DataCache.pIdMap.get(pid);
 				if (ctList != null) {
-					for (int i = 0; i < ctList.size(); ++i) {
+					for (int i = 0, n = ctList.size(); i < n; ++i) {
 						CityToken ct = ctList.get(i);
 						names.add(ct.getName());
 						pids.push(ct.getId());
