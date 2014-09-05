@@ -6,7 +6,7 @@ import java.util.Set;
 
 public abstract class AbstractLeaf extends AbstractNode {
 
-	private Set<AbstractLeaf> fop = null;
+	private Set<AbstractLeaf> fop;
 
 	public Set<AbstractLeaf> followpos() {
 		if (fop == null) {

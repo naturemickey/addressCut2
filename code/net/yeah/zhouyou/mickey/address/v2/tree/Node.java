@@ -74,7 +74,7 @@ public class Node extends AbstractNode implements INode {
 		return sb.toString();
 	}
 
-	Set<AbstractLeaf> fp = null;
+	private Set<AbstractLeaf> fp;
 
 	@Override
 	public Set<AbstractLeaf> firstpos() {
