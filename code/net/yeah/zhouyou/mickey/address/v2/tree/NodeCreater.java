@@ -15,20 +15,20 @@ public class NodeCreater {
 	}
 
 	private static INode merge(Node.Type type, INode... nodes) {
-		if (nodes.length == 1)
-			return nodes[0];
+		while (nodes.length > 1) {
+			int mod2 = nodes.length % 2;
+			INode[] nodes2 = new INode[nodes.length / 2 + mod2];
+			int idx = 0;
+			for (int i = 1; i < nodes.length; i += 2) {
+				nodes2[idx++] = new Node(type, nodes[i - 1], nodes[i]);
+			}
 
-		int mod2 = nodes.length % 2;
-		INode[] nodes2 = new INode[nodes.length / 2 + mod2];
-		int idx = 0;
-		for (int i = 1; i < nodes.length; i += 2) {
-			nodes2[idx++] = new Node(type, nodes[i - 1], nodes[i]);
+			if (mod2 == 1) {
+				nodes2[idx] = nodes[nodes.length - 1];
+			}
+			nodes = nodes2;
 		}
-
-		if (mod2 == 1) {
-			nodes2[idx] = nodes[nodes.length - 1];
-		}
-		return merge(type, nodes2);
+		return nodes[0];
 	}
 
 	public static INode create(Set<String> names) {
@@ -37,7 +37,7 @@ public class NodeCreater {
 		for (String name : names) {
 			nodes[++idx] = create(name);
 		}
-		return merge(Node.Type.OR,nodes);
+		return merge(Node.Type.OR, nodes);
 	}
 
 }

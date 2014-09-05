@@ -6,11 +6,10 @@ import java.util.Set;
 
 public abstract class AbstractLeaf extends AbstractNode {
 
-	Set<AbstractLeaf> fop = null;
+	private Set<AbstractLeaf> fop = null;
 
 	public Set<AbstractLeaf> followpos() {
 		if (fop == null) {
-			fop = Collections.emptySet();
 			Node parent = (Node) this.getParent();
 			INode current = this;
 
@@ -19,10 +18,8 @@ public abstract class AbstractLeaf extends AbstractNode {
 				parent = (Node) current.getParent();
 			}
 
-			if (parent != null) {
-				// 以下一行代码成立，必须先证明：this必然在parent.getLeft().lastPos()中。
-				fop = parent.getRight().firstpos();
-			}
+			// 以下一行代码成立，必须先证明：this必然在parent.getLeft().lastPos()中。
+			fop = (parent != null) ? parent.getRight().firstpos() : Collections.<AbstractLeaf> emptySet();
 		}
 
 		return fop;
