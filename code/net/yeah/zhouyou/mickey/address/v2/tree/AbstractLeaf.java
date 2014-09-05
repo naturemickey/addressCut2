@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class AbstractLeaf extends AbstractNode implements INode {
+public abstract class AbstractLeaf extends AbstractNode {
 
 	Set<AbstractLeaf> fop = null;
 
