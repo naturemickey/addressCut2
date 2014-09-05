@@ -5,13 +5,22 @@ import java.util.Set;
 public class NodeCreater {
 
 	public static INode create(String name) {
-		char[] cs = name.toCharArray();
-		INode[] nodes = new INode[cs.length + 1];
-		for (int i = 0, n = cs.length; i < n; ++i) {
-			nodes[i] = new Leaf(cs[i]);
+		int length = name.length();
+		INode[] nodes = new INode[length + 1];
+		for (int i = 0, n = length; i < n; ++i) {
+			nodes[i] = new Leaf(name.charAt(i));
 		}
-		nodes[cs.length] = new AcceptLeaf(name);
+		nodes[length] = new AcceptLeaf(name);
 		return merge(Node.Type.CAT, nodes);
+	}
+
+	public static INode create(Set<String> names) {
+		INode[] nodes = new INode[names.size()];
+		int idx = -1;
+		for (String name : names) {
+			nodes[++idx] = create(name);
+		}
+		return merge(Node.Type.OR, nodes);
 	}
 
 	private static INode merge(Node.Type type, INode... nodes) {
@@ -30,14 +39,4 @@ public class NodeCreater {
 		}
 		return nodes[0];
 	}
-
-	public static INode create(Set<String> names) {
-		INode[] nodes = new INode[names.size()];
-		int idx = -1;
-		for (String name : names) {
-			nodes[++idx] = create(name);
-		}
-		return merge(Node.Type.OR, nodes);
-	}
-
 }
