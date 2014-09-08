@@ -6,8 +6,9 @@ public abstract class AbstractNode implements INode {
 
 	@Override
 	public void setParent(INode node) {
-		if (this.parent != null)
-			throw new RuntimeException();
+		// 以下两行仅为防止不必要的重复，算法完成之后即没有必要。
+		// if (this.parent != null)
+		// throw new RuntimeException();
 		this.parent = node;
 	}
 
