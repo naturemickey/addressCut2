@@ -122,16 +122,18 @@ public class AddressScanner {
 			}
 		}
 
-		// 把上级为空的补上.
-		CityToken ct = bottom;
-		while (ct.getLevel() > 0) {
-			CityToken pct = ct.getParent();
-			if (pct == null)
-				break;
-			if (res.getAddr(pct.getLevel()) == null) {
-				setAddr(res, pct.getId(), null, addrList);
+		if (bottom != null) {
+			// 把上级为空的补上.
+			CityToken ct = bottom;
+			while (ct.getLevel() > 0) {
+				CityToken pct = ct.getParent();
+				if (pct == null)
+					break;
+				if (res.getAddr(pct.getLevel()) == null) {
+					setAddr(res, pct.getId(), null, addrList);
+				}
+				ct = pct;
 			}
-			ct = pct;
 		}
 		return res;
 	}

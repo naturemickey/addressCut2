@@ -35,6 +35,8 @@ public class Address {
 						detailAddress = subOrigAddr(cityAddressReal, cityAddress.getName(), false);
 					} else if (provinceAddressReal != null) {
 						detailAddress = subOrigAddr(provinceAddressReal, provinceAddress.getName(), false);
+					} else {
+						detailAddress = originalAddress;
 					}
 				}
 			}
