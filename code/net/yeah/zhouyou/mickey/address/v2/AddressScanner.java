@@ -37,6 +37,14 @@ public class AddressScanner {
 
 		Address res = matchAddress(txt, addrList);
 
+		if (res.getProvince() == null) {
+			addrList = DFAInstance.getDFA123().scan(txt);
+			if (addrList.size() == 0)
+				return new Address(txt);
+
+			res = matchAddress(txt, addrList);
+		}
+
 		if (exactMatch4Level && res.getTown() == null && res.getCity() != null) {
 			// 用当前城市的DFA再重新匹配一遍
 			DFA cityDFA = DFAInstance.getDFA(res.getCity().getId());

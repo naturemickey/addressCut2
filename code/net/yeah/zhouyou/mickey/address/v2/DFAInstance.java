@@ -98,4 +98,37 @@ public class DFAInstance {
 		}
 		System.out.println("DFA init cost:" + (System.currentTimeMillis() - initStart));
 	}
+
+	private static interface DFASupplier {
+		DFA get();
+	}
+
+	private static DFASupplier dfa123 = new DFASupplier() {
+		public synchronized DFA get() {
+			if (dfa123 == this) {
+				Set<String> nameSet = new HashSet<String>();
+				for (Map.Entry<Long, List<CityToken>> e : DataCache.pIdMap.entrySet()) {
+					for (CityToken ct : e.getValue()) {
+						if (ct.getLevel() <= 3) {
+							nameSet.add(ct.getName());
+						} else {
+							break;
+						}
+					}
+				}
+				final DFA dfa = DFA.create(NodeCreater.create(nameSet));
+				dfa123 = new DFASupplier() {
+					public DFA get() {
+						return dfa;
+					}
+				};
+				return dfa;
+			}
+			return dfa123.get();
+		}
+	};
+
+	public static DFA getDFA123() {
+		return dfa123.get();
+	}
 }
