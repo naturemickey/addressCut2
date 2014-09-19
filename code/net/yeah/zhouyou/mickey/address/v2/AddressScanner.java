@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 public class AddressScanner {
 
 	private static final Set<String> dCity;
+	private static final Set<String> hmtCity;
 
 	static {
 		dCity = new HashSet<String>();
@@ -18,6 +19,11 @@ public class AddressScanner {
 		dCity.add("上海");
 		dCity.add("天津");
 		dCity.add("重庆");
+
+		hmtCity = new HashSet<String>();
+		hmtCity.add("香港");
+		hmtCity.add("澳門");
+		hmtCity.add("臺灣");
 	}
 
 	private static Pattern p = Pattern.compile("[\\s　]");
@@ -53,15 +59,26 @@ public class AddressScanner {
 			res = matchAddress(txt, addrList);
 		}
 
-		if (res.getCityAddress() == null && res.getProvinceAddress() != null
-				&& dCity.contains(res.getProvinceAddress())) {
-			// 当只识别到一个地址，并且是直辖市的时候
-			List<CityToken> ctl = DataCache.nameMap.get(res.getProvinceAddress() + "市");
-			for (int i = 0, n = ctl.size(); i < n; ++i) {
-				CityToken ct = ctl.get(0);
-				if (ct.getParentId() != null && ct.getParentId().equals(res.getProvince().getId())) {
-					setAddr(res, ct.getId(), null, addrList);
-					break;
+		if (res.getCityAddress() == null && res.getProvinceAddress() != null) {
+			CityToken province = res.getProvince();
+			if (dCity.contains(res.getProvinceAddress())) {
+				// 当只识别到一个地址，并且是直辖市的时候
+				List<CityToken> ctl = DataCache.nameMap.get(res.getProvinceAddress() + "市");
+				for (int i = 0, n = ctl.size(); i < n; ++i) {
+					CityToken ct = ctl.get(i);
+					if (ct.getParentId() != null && ct.getParentId().equals(province.getId())) {
+						setAddr(res, ct.getId(), null, addrList);
+						break;
+					}
+				}
+			} else if (hmtCity.contains(res.getProvinceAddress())) {
+				List<CityToken> ctl = DataCache.nameMap.get(res.getProvinceAddress());
+				for (int i = 0, n = ctl.size(); i < n; ++i) {
+					CityToken ct = ctl.get(i);
+					if (ct.getParentId() != null && ct.getParentId().equals(province.getId())) {
+						setAddr(res, ct.getId(), null, addrList);
+						break;
+					}
 				}
 			}
 		}
