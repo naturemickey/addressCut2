@@ -30,6 +30,9 @@ public class DataCache {
 
 			for (int i = 3; i < ss.length; ++i) {
 				String name = ss[i];
+				
+				if (name == null || name.length() == 0)
+					continue;
 
 				CityToken ct = new CityToken(id, parentId, Integer.valueOf(level), name);
 				List<CityToken> ctList = nm.get(name);

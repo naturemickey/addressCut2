@@ -23,7 +23,7 @@ public class AddressScanner {
 		hmtCity = new HashSet<String>();
 		hmtCity.add("香港");
 		hmtCity.add("澳門");
-		hmtCity.add("臺灣");
+		//hmtCity.add("臺灣");
 	}
 
 	private static Pattern p = Pattern.compile("[\\s　]");
