@@ -92,6 +92,9 @@ public class DFA implements Serializable {
 					fromIdx = currentAcceptedIdx + 1;
 					currentAccepted = null;
 					currentIdx = currentAcceptedIdx;
+				} else if (currentIdx + 1 == len && currentState.isAccepted()) {
+					if (!res.contains(currentState.key))
+						res.add(currentState.key);
 				} else {
 					currentIdx = fromIdx;
 					fromIdx = fromIdx + 1;
