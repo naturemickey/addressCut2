@@ -90,5 +90,7 @@ public class DataCache {
 		idMap = im;
 		pIdMap = pim;
 		System.out.println("DataCache init cost:" + (System.currentTimeMillis() - initStart));
+		System.out.println("name count:" + nameMap.size());
+		System.out.println("id count:" + idMap.size());
 	}
 }

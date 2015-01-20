@@ -85,16 +85,16 @@ public class DFA implements Serializable {
 			char a = bl[currentIdx];
 			currentState = currentState.tran(a);
 			if (currentState == null || currentIdx + 1 == len) {
-				if (currentAccepted != null) {
+				if (currentIdx + 1 == len && currentState.isAccepted()) {
+					if (!res.contains(currentState.key))
+						res.add(currentState.key);
+				} else if (currentAccepted != null) {
 					if (!res.contains(currentAccepted.key))
 						res.add(currentAccepted.key);
 
 					fromIdx = currentAcceptedIdx + 1;
 					currentAccepted = null;
 					currentIdx = currentAcceptedIdx;
-				} else if (currentIdx + 1 == len && currentState.isAccepted()) {
-					if (!res.contains(currentState.key))
-						res.add(currentState.key);
 				} else {
 					currentIdx = fromIdx;
 					fromIdx = fromIdx + 1;
