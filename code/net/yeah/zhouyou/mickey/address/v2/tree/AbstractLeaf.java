@@ -6,23 +6,17 @@ import java.util.Set;
 
 public abstract class AbstractLeaf extends AbstractNode {
 
-	private Set<AbstractLeaf> fop;
-
 	public Set<AbstractLeaf> followpos() {
-		if (fop == null) {
-			Node parent = (Node) this.getParent();
-			INode current = this;
+		Node parent = (Node) this.getParent();
+		INode current = this;
 
-			while (parent != null && (parent.getType() == Node.Type.OR || parent.getLeft() != current)) {
-				current = parent;
-				parent = (Node) current.getParent();
-			}
-
-			// 以下一行代码成立，必须先证明：this必然在parent.getLeft().lastPos()中。
-			fop = (parent != null) ? parent.getRight().firstpos() : Collections.<AbstractLeaf> emptySet();
+		while (parent != null && (parent.getType() == Node.Type.OR || parent.getLeft() != current)) {
+			current = parent;
+			parent = (Node) current.getParent();
 		}
 
-		return fop;
+		// 以下一行代码成立，必须先证明：this必然在parent.getLeft().lastPos()中。
+		return (parent != null) ? parent.getRight().firstpos() : Collections.<AbstractLeaf> emptySet();
 	}
 
 	private Set<AbstractLeaf> fp = new HashSet<AbstractLeaf>();

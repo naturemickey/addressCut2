@@ -74,20 +74,15 @@ public class Node extends AbstractNode implements INode {
 		return sb.toString();
 	}
 
-	private Set<AbstractLeaf> fp;
-
 	@Override
 	public Set<AbstractLeaf> firstpos() {
-		if (fp == null) {
-			if (this.type == Type.CAT) {
-				fp = left.firstpos();
-			} else {
-				Set<AbstractLeaf> lf = left.firstpos();
-				Set<AbstractLeaf> rf = right.firstpos();
-				fp = CollUtils.union(lf, rf);
-			}
+		if (this.type == Type.CAT) {
+			return left.firstpos();
+		} else {
+			Set<AbstractLeaf> lf = left.firstpos();
+			Set<AbstractLeaf> rf = right.firstpos();
+			return CollUtils.union(lf, rf);
 		}
-		return fp;
 	}
 
 }
